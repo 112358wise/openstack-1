@@ -2,9 +2,11 @@
 
 ## Computeノード兼用で構成
 
+```txt
 /dev/sdb1 -> cinder
 /dev/sdc1 -> swift
 /dev/sdd1 -> swift
+```
 
 ## Cinder用の構成
 ```sh
@@ -41,8 +43,8 @@ vgcreate cinder-volumes /dev/sdb1
        mkdir -p /srv/node/sdc1
        mkdir -p /srv/node/sdd1
 # Edit the /etc/fstab file and add the following to it:
-      /dev/sdd1 /srv/node/sdc1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
-      /dev/sde1 /srv/node/sdd1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+      /dev/sdc1 /srv/node/sdc1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+      /dev/sdd1 /srv/node/sdd1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
 # Mount the devices:
        mount /srv/node/sdc1
        mount /srv/node/sdd1

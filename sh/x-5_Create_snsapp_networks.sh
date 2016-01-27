@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-# this scripts is origined from 
+# this scripts is origined from
 # https://github.com/josug-book1-materials/chapter05-10
 
 LANG=en_US.utf8
@@ -12,7 +12,7 @@ fi
 
 controller=$1
 
-    cat << EOF > ~/openrc-snsapp
+    cat << EOF > ~/openrc
 export OS_PROJECT_DOMAIN_ID=default
 export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=SNSApp
@@ -23,7 +23,7 @@ export OS_AUTH_URL=http://${controller}:5000/v3
 export PS1='[\u@\h \W(snsapp-infra-user)]\$ '
 EOF
 
-source ~/openrc-snsapp
+source ~/openrc
 
 neutron router-create ext-router
 neutron router-gateway-set ext-router ext-net
@@ -46,4 +46,3 @@ neutron security-group-list
 echo
 echo "neutron security-group-rule-lit"
 neutron security-group-rule-lit
-

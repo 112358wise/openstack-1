@@ -32,6 +32,7 @@ sed -i "s/^TIME_ZONE = .*/TIME_ZONE = \"Asia\/Tokyo\"/" ${CONF}
 
 # Edit the /usr/share/openstack-dashboard/openstack_dashboard/settings.py file and complete the following actions:
 ## Bug 1221117 - Horizon: Re login failed after timeout
+echo "** To fix the Bug 1221117 - Horizon: Re login failed after timeout **"
 CONF=/usr/share/openstack-dashboard/openstack_dashboard/settings.py
 echo
 echo "** Editing the ${CONF}..."

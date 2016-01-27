@@ -49,14 +49,14 @@ create_secgroup_rule () {
     # neutron security-group-rule-create --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 }
 
-create_instance () {
+Launch_instance () {
 
     #
     # create a instance
     #
     
     echo
-    echo "** creating a instance..."
+    echo "** Launching a instance..."
     echo
 
     TENANT_NAME=$1
@@ -217,8 +217,8 @@ create_secgroup_rule ${TENANT_NAME}
 # To get net id
 NET_ID=`get_uuid ${TENANT_NAME}-net`
 
-# To Luanch ${TENANT_NAME} instance
-create_instance ${TENANT_NAME} ${NET_ID} ${TENANT_NAME}-instance1
+# To Launch ${TENANT_NAME} instance
+Launch_instance ${TENANT_NAME} ${NET_ID} ${TENANT_NAME}-instance1
 
 echo
 echo "** Done."

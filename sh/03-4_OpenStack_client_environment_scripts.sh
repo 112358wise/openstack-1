@@ -18,10 +18,10 @@ ADMIN_PASS=`get_passwd ADMIN_PASS`
 DEMO_PASS=`get_passwd DEMO_PASS`
 
 echo
-echo "Creating openrc-admin."
+echo "Creating admin-openrc."
 echo
 
-cat << EOF > ~/openrc-admin
+cat << EOF > ~/admin-openrc
 export OS_PROJECT_DOMAIN_ID=default
 export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=admin
@@ -29,19 +29,19 @@ export OS_TENANT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=${ADMIN_PASS}
 export OS_AUTH_URL=http://${controller}:35357/v3
-export PS1='[\u@\h \W(admin)]\$ '
+export PS1='[\u@\h \W(admin)]\# '
 EOF
 
 echo
-echo "** ~/openrc-admin"
-cat ~/openrc-admin
+echo "** ~/admin-openrc"
+cat ~/admin-openrc
 echo
 
 echo
-echo "Creating openrc-demo."
+echo "Creating demo-openrc."
 echo
 
-cat << EOF > ~/openrc-demo
+cat << EOF > ~/demo-openrc
 export OS_PROJECT_DOMAIN_ID=default
 export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=demo
@@ -53,8 +53,8 @@ export PS1='[\u@\h \W(demo)]\$ '
 EOF
 
 echo
-echo "** ~/openrc-demo"
-cat ~/openrc-demo
+echo "** ~/demo-openrc"
+cat ~/demo-openrc
 echo
 
 

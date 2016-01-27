@@ -36,7 +36,7 @@ echo
 echo "** Installing the packages..."
 echo
 
-Install the supporting utility packages:
+# Install the supporting utility packages:
 
 yum -y -q install xfsprogs rsync
 
@@ -53,19 +53,19 @@ gid = swift
 log file = /var/log/rsyncd.log
 pid file = /var/run/rsyncd.pid
 address = ${object}
- 
+
 [account]
 max connections = 2
 path = /srv/node/
 read only = false
 lock file = /var/lock/account.lock
- 
+
 [container]
 max connections = 2
 path = /srv/node/
 read only = false
 lock file = /var/lock/container.lock
- 
+
 [object]
 max connections = 2
 path = /srv/node/
@@ -98,7 +98,7 @@ echo
 
 curl -o /etc/swift/account-server.conf \
   https://git.openstack.org/cgit/openstack/swift/plain/etc/account-server.conf-sample?h=stable/kilo
-  
+
 curl -o /etc/swift/container-server.conf \
   https://git.openstack.org/cgit/openstack/swift/plain/etc/container-server.conf-sample?h=stable/kilo
 
@@ -127,7 +127,7 @@ openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 openstack-config --set ${CONF} DEFAULT devices /srv/node
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon account-server
+openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon account-server"
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
 openstack-config --set ${CONF} filter:recon recon_cache_path /var/cache/swift
@@ -148,7 +148,7 @@ openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 openstack-config --set ${CONF} DEFAULT devices /srv/node
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon container-server
+openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon container-server"
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
 openstack-config --set ${CONF} filter:recon recon_cache_path /var/cache/swift
@@ -169,7 +169,7 @@ openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 openstack-config --set ${CONF} DEFAULT devices /srv/node
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon  object-server
+openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon object-server"
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
 openstack-config --set ${CONF} filter:recon recon_cache_path /var/cache/swift
@@ -181,18 +181,6 @@ chown -R swift:swift /srv/node
 # Create the recon directory and ensure proper ownership of it:
 mkdir -p /var/cache/swift
 chown -R swift:swift /var/cache/swift
-
-
-# To finalize installation
-# Start the Block Storage volume service including its dependencies and configure them to start
-# when the system boots:
-echo
-echo "** Starting swift services on `hostname`..."
-echo
-
-systemctl enable openstack-swift-volume.service target.service
-systemctl start openstack-swift-volume.service target.service
-systemctl status openstack-swift-volume.service target.service
 
 echo "** ----------------------------------------------------------------"
 echo "** Complete the $0 on `hostname`"
