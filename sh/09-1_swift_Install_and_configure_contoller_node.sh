@@ -47,8 +47,8 @@ echo "** openstack endpoint create.."
 echo
 
 openstack endpoint create \
-  --publicurl 'http://${controller}:8080/v1/AUTH_%(tenant_id)s' \
-  --internalurl 'http:/${/controller}:8080/v1/AUTH_%(tenant_id)s' \
+  --publicurl http://${controller}:8080/v1/AUTH_%\(tenant_id\)s \
+  --internalurl http://${controller}:8080/v1/AUTH_%\(tenant_id\)s \
   --adminurl http://${controller}:8080 \
   --region RegionOne \
   object-store
@@ -85,7 +85,7 @@ openstack-config --set ${CONF} DEFAULT user swift
 openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk ratelimit authtoken keystoneauth container-quotas account-quotas slo dlo proxy-logging proxy-server rabbit_host ${controller}
+openstack-config --set ${CONF} pipeline:main pipeline "catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk ratelimit authtoken keystoneauth container-quotas account-quotas slo dlo proxy-logging proxy-server"
 
 # In the [app:proxy-server] section, enable automatic account creation:
 openstack-config --set ${CONF} app:proxy-server account_autocreate true
@@ -96,8 +96,8 @@ openstack-config --set ${CONF} filter:keystoneauth operator_roles admin,user
 
 # In the [filter:authtoken] section, configure Identity service access:
 openstack-config --set ${CONF} filter:authtoken paste.filter_factory keystonemiddleware.auth_token:filter_factory
-openstack-config --set ${CONF} filter:authtoken auth_uri http://controller:5000
-openstack-config --set ${CONF} filter:authtoken auth_url http://controller:35357
+openstack-config --set ${CONF} filter:authtoken auth_uri http://${controller}:5000
+openstack-config --set ${CONF} filter:authtoken auth_url http://${controller}:35357
 openstack-config --set ${CONF} filter:authtoken auth_plugin password
 openstack-config --set ${CONF} filter:authtoken project_domain_id default
 openstack-config --set ${CONF} filter:authtoken user_domain_id default
@@ -108,4 +108,3 @@ openstack-config --set ${CONF} filter:authtoken delay_auth_decision true
 
 # In the [filter:cache] section, configure the memcached location:
 openstack-config --set ${CONF} filter:cache memcache_servers 127.0.0.1:11211
-

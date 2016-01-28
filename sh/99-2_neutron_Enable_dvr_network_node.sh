@@ -56,7 +56,7 @@ echo "net.ipv4.conf.default.rp_filter=0" >> ${CONF}
 sysctl -p
 
 # To configure the Networking common components
-# 
+#
 # Edit the /etc/neutron/neutron.conf file and complete the following actions:
 CONF=/etc/neutron/neutron.conf
 echo
@@ -80,7 +80,8 @@ test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 # Configure the Open vSwitch agent. Edit the /etc/neutron/plugins/ml2/ml2_conf.ini file
 # Replace TUNNEL_INTERFACE_IP_ADDRESS with the IP address of the interface that handles GRE/VXLAN project networks.
 openstack-config --set ${CONF} ovs local_ip ${INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS}
-openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
+openstack-config --set ${CONF} ovs bridge_mappings external:br-ex
+#openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
 
 openstack-config --set ${CONF} agent l2_population True
 openstack-config --set ${CONF} agent tunnel_types gre,vxlan
@@ -102,7 +103,7 @@ test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 # Note :
 # The external_network_bridge option intentionally contains no value.
 openstack-config --set ${CONF} DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
-openstack-config --set ${CONF} DEFAULT external_network_bridge 
+openstack-config --set ${CONF} DEFAULT external_network_bridge
 openstack-config --set ${CONF} DEFAULT router_delete_namespaces True
 openstack-config --set ${CONF} DEFAULT use_namespaces True
 openstack-config --set ${CONF} DEFAULT agent_mode dvr_snat

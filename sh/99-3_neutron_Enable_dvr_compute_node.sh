@@ -4,7 +4,7 @@ export LANG=en_US.utf8
 
 generate_dvr_sh () {
 
-    cat << 'EOF' > ../lib//${SH}
+    cat << 'EOF' > ../lib/${SH}
 #!/bin/sh -e
 
 export LANG=en_US.utf8
@@ -83,7 +83,8 @@ test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 
 # Replace TUNNEL_INTERFACE_IP_ADDRESS with the IP address of the interface that handles GRE/VXLAN project networks.
 openstack-config --set ${CONF} ovs local_ip ${INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS}
-openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
+openstack-config --set ${CONF} ovs bridge_mappings external:br-ex
+#openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
 openstack-config --set ${CONF} agent l2_population True
 openstack-config --set ${CONF} agent tunnel_types gre,vxlan
 openstack-config --set ${CONF} agent enable_distributed_routing True
@@ -100,11 +101,11 @@ echo
 
 test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 
-# Note : 
+# Note :
 # The external_network_bridge option intentionally contains no value.
 openstack-config --set ${CONF} DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
 openstack-config --set ${CONF} DEFAULT use_namespaces True
-openstack-config --set ${CONF} DEFAULT external_network_bridge 
+openstack-config --set ${CONF} DEFAULT external_network_bridge
 openstack-config --set ${CONF} DEFAULT router_delete_namespaces True
 openstack-config --set ${CONF} DEFAULT agent_mode dvr
 
@@ -198,9 +199,9 @@ METADATA_SECRET=`get_passwd METADATA_SECRET`
 
 ssh-copy-id root@${compute}
 generate_dvr_sh
-chmod 755 ../lib//${SH}
+chmod 755 ../lib/${SH}
 scp -p ${PW_FILE} root@${compute}:/root/
-scp -p ../lib//${SH} root@${compute}:/root/
+scp -p ../lib/${SH} root@${compute}:/root/
 ssh root@${compute} "/root/${SH} ${controller} ${tunnel} ${INTERFACE_NAME} ${METADATA_SECRET}"
 
 # Verify operation

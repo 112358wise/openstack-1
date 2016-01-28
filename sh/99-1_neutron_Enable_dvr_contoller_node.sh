@@ -31,43 +31,44 @@ enable_dvr_controller () {
     echo
     echo "** Editing the ${CONF}..."
     echo
-    
+
     test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
-    
-    # Note : Configuring the router_distributed = True option creates distributed routers 
+
+    # Note : Configuring the router_distributed = True option creates distributed routers
     # by default for all users.
     # Without it, only privileged users can create distributed routers using the --distributed True option
     # during router creation.
-    
+
     openstack-config --set ${CONF} DEFAULT verbose True
     openstack-config --set ${CONF} DEFAULT router_distributed True
     openstack-config --set ${CONF} DEFAULT core_plugin ml2
     openstack-config --set ${CONF} DEFAULT service_plugins router
     openstack-config --set ${CONF} DEFAULT allow_overlapping_ips True
-    
+
     # Configure the ML2 plug-in. Edit the /etc/neutron/plugins/ml2/ml2_conf.ini file:
     CONF=/etc/neutron/plugins/ml2/ml2_conf.ini
     echo
     echo "** Editing the ${CONF}..."
     echo
-    
+
     test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
-    
+
     # Note :
     # The external value in the network_vlan_ranges option lacks VLAN ID ranges to support use of
     # arbitrary VLAN IDs by privileged users.
     openstack-config --set ${CONF} ml2 type_drivers flat,vlan,gre,vxlan
-    openstack-config --set ${CONF} ml2 tenant_network_types vlan,gre,vxlan
+    #openstack-config --set ${CONF} ml2 tenant_network_types vlan,gre,vxlan
+    openstack-config --set ${CONF} ml2 tenant_network_types gre,vxlan
     openstack-config --set ${CONF} ml2 mechanism_drivers openvswitch,l2population
     openstack-config --set ${CONF} ml2_type_flat flat_networks external
-    openstack-config --set ${CONF} ml2_type_vlan network_vlan_ranges external,vlan:1:1000
+    #openstack-config --set ${CONF} ml2_type_vlan network_vlan_ranges external,vlan:1:1000
     openstack-config --set ${CONF} ml2_type_gre tunnel_id_ranges 1:1000
-    openstack-config --set ${CONF} ml2_type_vxlan vni_ranges 1:1000
-    openstack-config --set ${CONF} ml2_type_vxlan vxlan_group 239.1.1.1
+    #openstack-config --set ${CONF} ml2_type_vxlan vni_ranges 1:1000
+    #openstack-config --set ${CONF} ml2_type_vxlan vxlan_group 239.1.1.1
     openstack-config --set ${CONF} securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
     openstack-config --set ${CONF} securitygroup enable_security_group True
     openstack-config --set ${CONF} securitygroup enable_ipset True
-    
+
 }
 
 
