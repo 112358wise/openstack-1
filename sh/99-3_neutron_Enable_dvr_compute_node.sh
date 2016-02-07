@@ -84,7 +84,7 @@ test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 # Replace TUNNEL_INTERFACE_IP_ADDRESS with the IP address of the interface that handles GRE/VXLAN project networks.
 openstack-config --set ${CONF} ovs local_ip ${INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS}
 openstack-config --set ${CONF} ovs bridge_mappings external:br-ex
-#openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
+## openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
 openstack-config --set ${CONF} agent l2_population True
 openstack-config --set ${CONF} agent tunnel_types gre,vxlan
 openstack-config --set ${CONF} agent enable_distributed_routing True
@@ -156,6 +156,7 @@ ovs-vsctl add-port br-ex ${INTERFACE_NAME}
 # offload (GRO) to achieve suitable throughput between your instances and the external network.
 # To temporarily disable GRO on the external network interface while testing your environment:
 ethtool -K ${INTERFACE_NAME} gro off
+ethtool -K ${INTERFACE_NAME} lro off
 
 echo
 echo "** Starting the Networking services..."

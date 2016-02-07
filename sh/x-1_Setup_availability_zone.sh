@@ -47,6 +47,9 @@ nova aggregate-create ag$az_num az$az_num
 id=$(nova aggregate-list | grep " ag$az_num " | cut -d"|" -f2)
 nova aggregate-add-host $id $compute_host
 
+# verify operation
+nova service-list
+
 echo
 echo "** Configuration finished."
 echo

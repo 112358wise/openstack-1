@@ -4,7 +4,7 @@ export LANG=en_US.utf8
 
 generate_dvr_sh () {
 
-    cat << EOF > ../lib/${SH}
+    cat << 'EOF' > ../lib/${SH}
 #!/bin/sh -e
 
 export LANG=en_US.utf8
@@ -80,8 +80,8 @@ test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 # Configure the Open vSwitch agent. Edit the /etc/neutron/plugins/ml2/ml2_conf.ini file
 # Replace TUNNEL_INTERFACE_IP_ADDRESS with the IP address of the interface that handles GRE/VXLAN project networks.
 openstack-config --set ${CONF} ovs local_ip ${INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS}
-openstack-config --set ${CONF} ovs bridge_mappings external:br-ex
-#openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
+## openstack-config --set ${CONF} ovs bridge_mappings external:br-ex
+openstack-config --set ${CONF} ovs bridge_mappings vlan:br-vlan,external:br-ex
 
 openstack-config --set ${CONF} agent l2_population True
 openstack-config --set ${CONF} agent tunnel_types gre,vxlan

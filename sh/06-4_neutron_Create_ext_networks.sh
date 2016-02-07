@@ -3,10 +3,10 @@
 export LANG=en_US.utf8
 
 # change these parameters on your environment
-EXTERNAL_NETWORK_CIDR="10.250.201.0/24"
-FLOATING_IP_START="10.250.201.201"
-FLOATING_IP_END="10.250.201.220"
-EXTERNAL_NETWORK_GATEWAY="10.250.201.1"
+EXTERNAL_NETWORK_CIDR="10.250.240.0/24"
+FLOATING_IP_START="10.250.240.201"
+FLOATING_IP_END="10.250.240.220"
+EXTERNAL_NETWORK_GATEWAY="10.250.240.1"
 
 # To create the external network
 # Source the admin credentials to gain access to admin-only CLI commands:
