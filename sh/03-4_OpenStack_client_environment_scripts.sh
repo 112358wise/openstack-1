@@ -29,7 +29,7 @@ export OS_TENANT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=${ADMIN_PASS}
 export OS_AUTH_URL=http://${controller}:35357/v3
-export PS1='[\u@\h \W(admin)]\# '
+export PS1='[\u@\h \W(admin)]# '
 EOF
 
 echo

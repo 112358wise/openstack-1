@@ -2,7 +2,57 @@
 
 export LANG=en_US.utf8
 
+TENANT_NETWORK_CIDR="192.168.1.0/24"
+DNS_RESOLVER="8.8.8.8"
+TENANT_NETWORK_GATEWAY="192.168.1.1"
+
 function get_netid () { neutron net-list | grep $1  | awk '{print $2}'; }
+
+# To create the tenant network
+# Source the demo credentials to gain access to user-only CLI commands:
+source ~/demo-openrc
+
+# Create the network:
+# Like the external network, your tenant network also requires a subnet attached to it.
+# You can specify any valid subnet because the architecture isolates tenant networks.
+# By default, this subnet uses DHCP so your instances can obtain IP addresses.
+echo
+echo "** neutron net-create demo-net"
+echo
+
+neutron net-create demo-net
+
+# To create a subnet on the tenant network
+# Create the subnet:
+echo
+echo "** neutron subnet-create demo-net"
+echo
+
+neutron subnet-create demo-net ${TENANT_NETWORK_CIDR} \
+  --name demo-subnet --dns-nameserver ${DNS_RESOLVER} \
+  --gateway ${TENANT_NETWORK_GATEWAY}
+
+# To create a router on the tenant network and attach the external and tenant networks to it
+# Create the router:
+echo
+echo "** neutron router-create demo-router"
+echo
+
+neutron router-create demo-router
+
+# Attach the router to the demo tenant subnet:
+echo
+echo "** neutron router-interface-add demo-router demo-subnet"
+echo
+
+neutron router-interface-add demo-router demo-subnet
+
+# Attach the router to the external network by setting it as the gateway:
+echo
+echo "** neutron router-gateway-set demo-router ext-net"
+echo
+
+neutron router-gateway-set demo-router ext-net
 
 
 # To generate a key pair

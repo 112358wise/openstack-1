@@ -108,3 +108,7 @@ openstack-config --set ${CONF} filter:authtoken delay_auth_decision true
 
 # In the [filter:cache] section, configure the memcached location:
 openstack-config --set ${CONF} filter:cache memcache_servers 127.0.0.1:11211
+
+echo
+echo "** Done."
+echo
