@@ -1,17 +1,27 @@
-#!/bin/sh -e
+#!/bin/sh
 
 LANG=en_US.utf8
 
-source ~/demo-openrc
+if [[ $# -ne 1 ]]; then
+    echo "** Usage: $0 <TENANT_NAME name>"
+    exit 1
+fi
 
-neutron router-interface-delete demo-router demo-subnet
-neutron subnet-delete demo-subnet
-neutron net-delete demo-net
-neutron router-delete demo-router
+TENANT_NAME=$1
 
-source ~/test-openrc
+source ~/${TENANT_NAME}-openrc
 
-neutron router-interface-delete test-router test-subnet
-neutron subnet-delete test-subnet
-neutron net-delete test-net
-neutron router-delete test-router
+
+neutron router-gateway-clear ${TENANT_NAME}-router
+
+neutron router-interface-delete ${TENANT_NAME}-router ${TENANT_NAME}-subnet
+neutron subnet-delete ${TENANT_NAME}-subnet
+neutron net-delete ${TENANT_NAME}-net
+
+neutron router-interface-delete ${TENANT_NAME}-router ${TENANT_NAME}-subnet2
+neutron subnet-delete ${TENANT_NAME}-subnet2
+neutron net-delete ${TENANT_NAME}-net2
+
+neutron router-delete ${TENANT_NAME}-router
+
+

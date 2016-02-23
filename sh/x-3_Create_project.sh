@@ -67,10 +67,17 @@ Launch_instance () {
 
     IMAGE=cirros-0.3.4-x86_64 
     # IMAGE=cirros
+    
+    if [[ ${AZ} = "" ]]; then
     nova boot --flavor m1.tiny --image ${IMAGE} \
         --nic net-id=${NET_ID} \
         --security-group default --key-name ${TENANT_NAME}-key ${INSTANCE_NAME}
-
+    else
+    nova boot --flavor m1.tiny --image ${IMAGE} \
+        --nic net-id=${NET_ID} \
+        --security-group default --key-name ${TENANT_NAME}-key ${INSTANCE_NAME} \
+        --availability-zone=${AZ}
+    fi
 }
 
 create_project_network () {
@@ -185,13 +192,14 @@ EOF
 
 # main
 
-if [[ $# -ne 2 ]]; then
+if [[ $# -lt 2 ]]; then
     echo "** Usage: $0 <controller node IP> <tenant name>"
     exit 1
 fi
 
 controller=$1
 TENANT_NAME=$2
+AZ=$3
 
 TENANT_NETWORK_CIDR="192.168.1.0/24"
 DNS_RESOLVER="8.8.8.8"

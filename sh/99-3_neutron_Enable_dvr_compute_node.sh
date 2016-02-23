@@ -167,6 +167,12 @@ systemctl stop neutron-l3-agent.service neutron-metadata-agent.service
 systemctl start neutron-l3-agent.service neutron-metadata-agent.service
 systemctl status neutron-l3-agent.service neutron-metadata-agent.service
 
+echo
+echo "** Disabling firewalld on `hostname`..."
+echo
+
+systemctl stop firewalld
+systemctl disable firewalld
 
 echo "** ----------------------------------------------------------------"
 echo "** Complete the $0 on `hostname`"

@@ -130,6 +130,9 @@ openstack-config --set ${CONF} oslo_concurrency lock_path /var/lib/nova/tmp
 ### openstack-config --set ${CONF} DEFAULT verbose  True
 
 # Populatie the Compute database
+echo
+echo "** nova-manage db sync..."
+echo
 su -s /bin/sh -c "nova-manage db sync" nova
 
 # To finalize installation
