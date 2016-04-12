@@ -25,6 +25,7 @@ echo
 echo "** Disabling firewalld..."
 echo
 
+yum -y install firewalld
 systemctl stop firewalld
 systemctl disable firewalld
 
