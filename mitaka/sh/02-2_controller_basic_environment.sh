@@ -81,6 +81,8 @@ install_ntp () {
   echo
   chronyc sources
 
+}
+
 install_openstack_package () {
   echo
   echo "** Enable OpenStack Repository..."
