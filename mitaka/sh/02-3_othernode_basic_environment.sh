@@ -59,12 +59,6 @@ sed -i '/^server 3.centos.pool.ntp.org iburst/s/^/#/' ${CONF}
 systemctl enable chronyd.service
 systemctl start chronyd.service
 
-echo
-echo "** chronyc sources"
-echo
-chronyc sources
-
-
 # To configure prerequisites
 # Enable the OpenStack repository
 if [ ! -f /etc/yum.repos.d/CentOS-OpenStack-mitaka.repo ] ; then
@@ -89,6 +83,11 @@ yum install python-openstackclient -y
 # RHEL and CentOS enable SELinux by default. Install the openstack-selinux package to
 # automatically manage security policies for OpenStack services:
 yum -y install openstack-selinux
+
+echo
+echo "** chronyc sources"
+echo
+chronyc sources
 
 echo "** ----------------------------------------------------------------"
 echo "** Complete the $0 on `hostname`"
