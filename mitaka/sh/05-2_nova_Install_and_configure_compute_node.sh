@@ -101,7 +101,7 @@ openstack-config --set ${CONF} DEFAULT vif_plugging_timeout 0
 
 # If this command returns a value of zero, your compute node does not support hardware acceleration
 # and you must configure libvirt to use QEMU instead of KVM
-if [[ `egrep -c '(vmx|svm)' /proc/cpuinfo` -lt 9 ]] ; then
+if [[ `egrep -c '(vmx|svm)' /proc/cpuinfo` -lt 1 ]] ; then
     sed -i "/^\[libvirt\]$/a virt_type = qemu" /etc/nova/nova.conf
 fi
 
