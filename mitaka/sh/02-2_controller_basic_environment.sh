@@ -69,8 +69,8 @@ install_ntp () {
   echo "allow 172.31.0.0/16" >> ${CONF}
   echo "allow 10.0.0.0/8" >> ${CONF}
 
-  systemctl enable chrony.service
-  systemctl start chrony.service
+  systemctl enable chronyd.service
+  systemctl start chronyd.service
 
   echo
   echo "** Configured and Started the NTP service."

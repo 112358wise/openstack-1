@@ -46,7 +46,7 @@ echo
 
 test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 
-if grep "server "${controller}" ${CONF} > /dev/null ; then
+if grep "server ${controller}" ${CONF} > /dev/null ; then
    cp -pf ${CONF}.org ${CONF}
 fi
 
@@ -56,8 +56,8 @@ sed -i '/^server 1.centos.pool.ntp.org iburst/s/^/#/' ${CONF}
 sed -i '/^server 2.centos.pool.ntp.org iburst/s/^/#/' ${CONF}
 sed -i '/^server 3.centos.pool.ntp.org iburst/s/^/#/' ${CONF}
 
-systemctl enable chrony.service
-systemctl start chrony.service
+systemctl enable chronyd.service
+systemctl start chronyd.service
 
 echo
 echo "** chronyc sources"
