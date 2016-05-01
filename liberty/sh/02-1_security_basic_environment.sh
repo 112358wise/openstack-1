@@ -2,6 +2,9 @@
 
 export LANG=en_US.utf8
 
+# To install openssl
+yum -y install openssl
+
 PW_FILE=OPENSTACK_PASSWD.ini
 
 cp -p ./${PW_FILE} ./${PW_FILE}.org
@@ -14,4 +17,4 @@ done
 
 echo
 echo "** Created ${PW_FILE}. "
-echo 
+echo
