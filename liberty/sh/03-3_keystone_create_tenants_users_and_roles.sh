@@ -110,7 +110,7 @@ create_projects_users_and_roles () {
 
 # main
 prerequisites
-create_domain_projects_users_and_roles
+create_projects_users_and_roles
 
 echo
 echo "openstack user list"

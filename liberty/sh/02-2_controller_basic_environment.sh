@@ -121,15 +121,18 @@ install_openstack_package () {
   # To install openstack-config
   yum -y install openstack-utils
 
+  # To install openssl
+  yum -y install openssl
+
 }
 
 install_database () {
   # To install and configure the database server
   yum install mariadb mariadb-server MySQL-python -y
 
-  # Create and edit the /etc/my.cnf.d/openstack.cnf file from /etc/my.cnf.d/mariadb-server.cnf
-  CONF=/etc/my.cnf.d/openstack.cnf
-  cp -p /etc/my.cnf.d/mariadb-server.cnf ${CONF}
+  # Create and edit the /etc/my.cnf.d/mariadb_openstack.cnf file from /etc/my.cnf.d/server.cnf
+  CONF=/etc/my.cnf.d/mariadb_openstack.cnf
+  cp -p /etc/my.cnf.d/server.cnf ${CONF}
 
   # In the [mysqld] section, set the bind-address key to the management IP address of
   # the controller node to enable access by other nodes via the management network:

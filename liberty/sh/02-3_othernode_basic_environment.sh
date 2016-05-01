@@ -61,8 +61,8 @@ systemctl start chronyd.service
 
 # To configure prerequisites
 # Enable the OpenStack repository
-if [ ! -f /etc/yum.repos.d/CentOS-OpenStack-mitaka.repo ] ; then
-    yum install centos-release-openstack-mitaka -y
+if [ ! -f /etc/yum.repos.d/CentOS-OpenStack-liberty.repo ] ; then
+    yum install centos-release-openstack-liberty -y
 fi
 
 # To finalize installation
@@ -83,6 +83,9 @@ yum install python-openstackclient -y
 # RHEL and CentOS enable SELinux by default. Install the openstack-selinux package to
 # automatically manage security policies for OpenStack services:
 yum -y install openstack-selinux
+
+# To install openssl
+yum -y install openssl
 
 echo
 echo "** chronyc sources"

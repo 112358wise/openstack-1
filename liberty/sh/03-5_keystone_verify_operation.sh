@@ -13,8 +13,7 @@ controller=$1
 #
 # Edit the /usr/share/keystone/keystone-dist-paste.ini file and remove admin_token_auth
 # from the [pipeline:public_api], [pipeline:admin_api], and [pipeline:api_v3] sections.
-# CONF=/usr/share/keystone/keystone-dist-paste.ini
-CONF=/etc/keystone/keystone-paste.ini
+CONF=/usr/share/keystone/keystone-dist-paste.ini
 echo
 echo "** Editing the ${CONF}..."
 echo
