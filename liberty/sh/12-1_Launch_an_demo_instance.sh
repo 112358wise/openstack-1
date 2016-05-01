@@ -24,8 +24,8 @@ create_provider_network () {
   echo "** neutron net-create ext-net"
   echo
 
-  neutron net-create --shared --provider:physical_network provider \
-    --provider:network_type flat provider
+  neutron net-create public --shared --provider:physical_network public \
+    --provider:network_type flat
 
   # To create a subnet on the external network
   # Create the subnet:
@@ -35,10 +35,9 @@ create_provider_network () {
   echo "** neutron subnet-create ext-net"
   echo
 
-  neutron subnet-create --name provider \
+  neutron subnet-create public ${PROVIDER_NETWORK_CIDR} --name public \
     --allocation-pool start=${START_IP_ADDRESS},end=${END_IP_ADDRESS} \
-    --dns-nameserver ${DNS_RESOLVER} --gateway ${PROVIDER_NETWORK_GATEWAY} \
-    provider ${PROVIDER_NETWORK_CIDR}
+    --dns-nameserver ${DNS_RESOLVER} --gateway ${PROVIDER_NETWORK_GATEWAY}
 
   echo
   echo "Done."
@@ -67,9 +66,9 @@ create_selfservice_network () {
   echo "** neutron subnet-create demo-net"
   echo
 
-  neutron subnet-create --name demo-net \
-    --dns-nameserver ${DNS_RESOLVER} --gateway ${SELFSERVICE_NETWORK_GATEWAY} \
-    demo-net ${SELFSERVICE_NETWORK_CIDR}
+  neutron subnet-create demo-net ${SELFSERVICE_NETWORK_CIDR} --name demo-net \
+    --dns-nameserver ${DNS_RESOLVER} --gateway ${SELFSERVICE_NETWORK_GATEWAY}
+
 
 }
 
@@ -86,7 +85,7 @@ create_router () {
   source ~/admin-openrc
 
   # Add the router: external option to the provider network:
-  neutron net-update provider --router:external
+  neutron net-update public --router:external
 
   # Source the demo credentials to gain access to user-only CLI commands:
   source ~/demo-openrc
@@ -98,7 +97,7 @@ create_router () {
   neutron router-interface-add demo-router demo-net
 
   # Set a gateway on the provider network on the router:
-  neutron router-gateway-set demo-router provider
+  neutron router-gateway-set demo-router public
 
   # Vefify Operation
   source ~/admin-openrc
