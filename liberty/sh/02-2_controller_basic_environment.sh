@@ -121,9 +121,6 @@ install_openstack_package () {
   # To install openstack-config
   yum -y install openstack-utils
 
-  # To install openssl
-  yum -y install openssl
-
 }
 
 install_database () {

@@ -2,7 +2,7 @@
 
 export LANG=en_US.utf8
 
-function get_uuid () { 
+function get_uuid () {
     NET=$1
     neutron net-show ${NET} | grep " id " | awk '{print $4}';
 }
@@ -29,32 +29,32 @@ create_secgroup_rule () {
 
     # To access your instance remotely
     # Add rules to the default security group:
-    # 
+    #
     # Permit ICMP (ping):
 
     echo
     echo "** Permit ICMP (ping):"
     echo
-    
+
     nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
     # neutron security-group-rule-create --ethertype IPv4 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
-    
-    
+
+
     # Permit secure shell (SSH) access:
     echo
     echo "** Permit secure shell (SSH) access:"
     echo
-    
+
     nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
     # neutron security-group-rule-create --ethertype IPv4 --protocol tcp --port-range-min 22 --port-range-max 22 --remote-ip-prefix 0.0.0.0/0 default
 }
 
-Launch_instance () {
+launch_instance () {
 
     #
     # create a instance
     #
-    
+
     echo
     echo "** Launching a instance..."
     echo
@@ -65,9 +65,9 @@ Launch_instance () {
 
     source ~/${TENANT_NAME}-openrc
 
-    IMAGE=cirros-0.3.4-x86_64 
+    IMAGE=cirros-0.3.4-x86_64
     # IMAGE=cirros
-    
+
     if [[ ${AZ} = "" ]]; then
     nova boot --flavor m1.tiny --image ${IMAGE} \
         --nic net-id=${NET_ID} \
@@ -85,12 +85,12 @@ create_project_network () {
     #
     # create a project network
     #
-    
+
     TENANT_NAME=$1
     echo
     echo "** creating a ${TENANT_NAME} project network ..."
     echo
-    
+
     # To create the tenant network
     # Source the ${TENANT_NAME} credentials to gain access to user-only CLI commands:
     source ~/${TENANT_NAME}-openrc
@@ -132,10 +132,10 @@ create_project_network () {
 
     # Attach the router to the external network by setting it as the gateway:
     echo
-    echo "** neutron router-gateway-set ${TENANT_NAME}-router ext-net"
+    echo "** neutron router-gateway-set ${TENANT_NAME}-router provider"
     echo
 
-    neutron router-gateway-set ${TENANT_NAME}-router ext-net
+    neutron router-gateway-set ${TENANT_NAME}-router provider
 }
 
 create_project () {
@@ -147,30 +147,30 @@ create_project () {
     source ~/admin-openrc
 
     TENANT_NAME=$1
-    
+
     echo
     echo "** Creating ${TENANT_NAME} project..."
     echo
-    
+
     openstack user show ${TENANT_NAME} && openstack user delete ${TENANT_NAME}
     openstack project show ${TENANT_NAME} && openstack project delete ${TENANT_NAME}
 
     openstack project create --description "${TENANT_NAME} Project" ${TENANT_NAME}
-    
+
     # Create the ${TENANT_NAME} user:
     echo
     echo "** Creating the ${TENANT_NAME} user..."
     echo
-    
+
     openstack user create --password ${TENANT_NAME} ${TENANT_NAME}
-    
+
     # Add the user role to the ${TENANT_NAME} project and user:
     echo
     echo "** Adding the user role to the ${TENANT_NAME} project and user..."
     echo
-    
+
     openstack role add --project ${TENANT_NAME} --user ${TENANT_NAME} user
-    
+
     # Openrc Script
     cat << EOF > ~/${TENANT_NAME}-openrc
 export OS_PROJECT_DOMAIN_ID=default
@@ -182,7 +182,7 @@ export OS_PASSWORD=${TENANT_NAME}
 export OS_AUTH_URL=http://${controller}:5000/v3
 export PS1='[\u@\h \W(${TENANT_NAME})]\$ '
 EOF
-    
+
     echo
     echo "** ~/${TENANT_NAME}-openrc"
     echo
@@ -226,7 +226,7 @@ create_secgroup_rule ${TENANT_NAME}
 NET_ID=`get_uuid ${TENANT_NAME}-net`
 
 # To Launch ${TENANT_NAME} instance
-Launch_instance ${TENANT_NAME} ${NET_ID} ${TENANT_NAME}-instance1
+launch_instance ${TENANT_NAME} ${NET_ID} ${TENANT_NAME}-instance1
 
 echo
 echo "** Done."

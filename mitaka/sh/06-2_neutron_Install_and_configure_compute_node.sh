@@ -41,6 +41,11 @@ echo
 
 yum -y install openstack-neutron-linuxbridge ebtables
 
+# nova.virt.driver [-] Unable to load the virtualization driver
+# https://ask.openstack.org/en/question/82191/novavirtdriver-unable-to-load-the-virtualization-driver/
+
+yum -y install ipset
+
 # To configure the Networking common components
 #
 # The Networking common component configuration includes the authentication mechanism,

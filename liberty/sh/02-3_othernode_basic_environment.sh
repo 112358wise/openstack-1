@@ -32,7 +32,7 @@ echo
 echo "** Installing the packages"
 echo
 
-yum -y -q install chrony
+yum -y install chrony
 
 # To configure the NTP service
 echo
@@ -58,6 +58,7 @@ sed -i '/^server 3.centos.pool.ntp.org iburst/s/^/#/' ${CONF}
 
 systemctl enable chronyd.service
 systemctl start chronyd.service
+systemctl status chronyd.service
 
 # To configure prerequisites
 # Enable the OpenStack repository
@@ -83,9 +84,6 @@ yum install python-openstackclient -y
 # RHEL and CentOS enable SELinux by default. Install the openstack-selinux package to
 # automatically manage security policies for OpenStack services:
 yum -y install openstack-selinux
-
-# To install openssl
-yum -y install openssl
 
 echo
 echo "** chronyc sources"

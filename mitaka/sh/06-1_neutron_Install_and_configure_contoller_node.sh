@@ -90,7 +90,7 @@ install_components () {
   echo
 
   yum -y install openstack-neutron openstack-neutron-ml2 \
-    openstack-neutron-linuxbridge ebtables
+    openstack-neutron-linuxbridge ebtables ipset
 
 }
 

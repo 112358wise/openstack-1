@@ -31,6 +31,10 @@ prerequisites () {
 
 install_configure_components () {
 
+  echo
+  echo "** Installing and Configuring components..."
+  echo
+
   yum -y install openstack-keystone httpd mod_wsgi \
   memcached python-memco
 

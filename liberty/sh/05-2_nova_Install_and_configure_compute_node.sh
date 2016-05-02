@@ -75,7 +75,7 @@ openstack-config --set ${CONF} DEFAULT my_ip ${compute}
 openstack-config --set ${CONF} DEFAULT network_api_class nova.network.neutronv2.api.API
 openstack-config --set ${CONF} DEFAULT security_group_api neutron
 openstack-config --set ${CONF} DEFAULT linuxnet_interface_driver nova.network.linux_net.NeutronLinuxBridgeInterfaceDriver
-openstack-config --set ${CONF} DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDrive
+openstack-config --set ${CONF} DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
 
 # In the [vnc] section, enable and configure remote console access:
 # NOTE:
