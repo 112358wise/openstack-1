@@ -1,7 +1,7 @@
 公式ドキュメントの内容を可能な限りシェルスクリプトにしたものです。エラー処理はほとんど考慮していないです。
 http://docs.openstack.org/kilo/install-guide/install/yum/content/
 
-Memo: ストレージノードの構成について
+Memo: ストレージノードの構成は事前に手動で実施する必要あり（スクリプトではやっていないので）
 
 ## Computeノード兼用で構成
 

@@ -56,9 +56,6 @@ echo
 echo "** Installing the packages..."
 echo
 
-# If you intend to use non-raw image types such as QCOW2 and VMDK, install the QEMU support package:
-yum -y -q install qemu
-
 # Install the LVM packages:
 yum -y -q install lvm2
 
@@ -67,9 +64,10 @@ echo
 echo "** Starting lvm2 service"
 systemctl enable lvm2-lvmetad.service
 systemctl start lvm2-lvmetad.service
+systemctl status lvm2-lvmetad.service
 
 # Install and configure Block Storage volume components
-yum -y -q install openstack-cinder targetcli python-oslo-db python-oslo-log MySQL-python
+yum -y install openstack-cinder targetcli
 
 # Edit the /etc/cinder/cinder.conf file and complete the following actions:
 CONF=/etc/cinder/cinder.conf
@@ -80,7 +78,7 @@ echo
 test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 
 # In the [database] section, configure database access:
-openstack-config --set ${CONF} database connection mysql://cinder:${CINDER_DBPASS}@${controller}/cinder
+openstack-config --set ${CONF} database connection mysql+pymysql://cinder:${CINDER_DBPASS}@${controller}/cinder
 
 # In the [DEFAULT] and [oslo_messaging_rabbit] sections, configure RabbitMQ message queue access:
 openstack-config --set ${CONF} DEFAULT rpc_backend rabbit
@@ -94,8 +92,8 @@ openstack-config --set ${CONF} DEFAULT auth_strategy keystone
 openstack-config --set ${CONF} keystone_authtoken auth_uri http://${controller}:5000
 openstack-config --set ${CONF} keystone_authtoken auth_url http://${controller}:35357
 openstack-config --set ${CONF} keystone_authtoken auth_plugin password
-openstack-config --set ${CONF} keystone_authtoken project_domain_id default
-openstack-config --set ${CONF} keystone_authtoken user_domain_id default
+openstack-config --set ${CONF} keystone_authtoken project_domain_name default
+openstack-config --set ${CONF} keystone_authtoken user_domain_name default
 openstack-config --set ${CONF} keystone_authtoken project_name service
 openstack-config --set ${CONF} keystone_authtoken username cinder
 openstack-config --set ${CONF} keystone_authtoken password ${CINDER_PASS}
@@ -115,13 +113,24 @@ openstack-config --set ${CONF} lvm iscsi_helper lioadm
 openstack-config --set ${CONF} DEFAULT enabled_backends lvm
 
 # In the [DEFAULT] section, configure the location of the Image service:
-openstack-config --set ${CONF} DEFAULT glance_host ${controller}
+openstack-config --set ${CONF} DEFAULT glance_api_servers  http://${controller}:9292
 
 # In the [oslo_concurrency] section, configure the lock path:
-openstack-config --set ${CONF} oslo_concurrency lock_path /var/lock/cinder
+openstack-config --set ${CONF} oslo_concurrency lock_path /var/lib/cinder/tmp
 
 # (Optional) To assist with troubleshooting, enable verbose logging in the [DEFAULT] section:
 ### openstack-config --set ${CONF} DEFAULT verbose  True
+
+# Edit the /etc/nova/nova.conf file and complete the following actions:
+CONF=/etc/nova/nova.conf
+echo
+echo "** Editting ${CONF}..."
+echo
+
+test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
+
+openstack-config --set ${CONF} cinder os_region_name RegionOne
+
 
 
 # To finalize installation

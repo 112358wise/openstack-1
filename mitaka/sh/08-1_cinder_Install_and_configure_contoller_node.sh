@@ -19,6 +19,7 @@ CINDER_PASS=`get_passwd CINDER_PASS`
 CINDER_DBPASS=`get_passwd CINDER_DBPASS`
 RABBIT_PASS=`get_passwd RABBIT_PASS`
 
+prerequisites() {
 sed -i "s/CINDER_DBPASS/${CINDER_DBPASS}/g" ../sql/cinder.sql
 
 # Create the cinder database and Grant proper access to the cinder database:
@@ -36,7 +37,7 @@ echo
 echo "** openstack user create --password <password> cinder"
 echo
 
-openstack user create --password ${CINDER_PASS} cinder
+openstack user create --domain default --password ${CINDER_PASS} cinder
 
 # Add the admin role to the cinder user:
 echo
@@ -55,12 +56,14 @@ echo
 echo "** openstack service create --name cinder for volume"
 echo
 
+
 openstack service create --name cinder \
   --description "OpenStack Block Storage" volume
 
 echo
 echo "** openstack service create --name cinder for volumev2"
 echo
+
 
 openstack service create --name cinderv2 \
   --description "OpenStack Block Storage" volumev2
@@ -71,29 +74,27 @@ echo
 echo "** openstack endpoint create for volume"
 echo
 
-openstack endpoint create \
-  --publicurl http://${controller}:8776/v2/%\(tenant_id\)s \
-  --internalurl http://${controller}:8776/v2/%\(tenant_id\)s \
-  --adminurl http://${controller}:8776/v2/%\(tenant_id\)s \
-  --region RegionOne \
-  volume
+openstack endpoint create --region RegionOne \
+  volume public http://${controller}:8776/v1/%\(tenant_id\)s
+
+openstack endpoint create --region RegionOne \
+  volume internal http://${controller}:8776/v1/%\(tenant_id\)s
+
+openstack endpoint create --region RegionOne \
+  volume admin http://${controller}:8776/v1/%\(tenant_id\)s
   
-echo
-echo "** openstack endpoint create for volumev2"
-echo
+openstack endpoint create --region RegionOne \
+  volumev2 public http://${controller}:8776/v2/%\(tenant_id\)s
+  
+openstack endpoint create --region RegionOne \
+  volumev2 internal http://${controller}:8776/v2/%\(tenant_id\)s
 
-openstack endpoint create \
-  --publicurl http://${controller}:8776/v2/%\(tenant_id\)s \
-  --internalurl http://${controller}:8776/v2/%\(tenant_id\)s \
-  --adminurl http://${controller}:8776/v2/%\(tenant_id\)s \
-  --region RegionOne \
-  volumev2
+openstack endpoint create --region RegionOne \
+  volumev2 admin http://${controller}:8776/v2/%\(tenant_id\)s
 
-echo
-echo "** openstack service list"
-echo
+}
 
-openstack service list
+install_and_configure_components () {
 
 # To install and configure Block Storage controller components
 # Install the packages:
@@ -116,7 +117,7 @@ chown -R cinder:cinder ${CONF}
 test ! -f ${CONF}.org && cp -p ${CONF} ${CONF}.org
 
 # In the [database] section, configure database access:
-openstack-config --set ${CONF} database connection mysql://cinder:${CINDER_DBPASS}@${controller}/cinder
+openstack-config --set ${CONF} database connection mysql+pymysql://cinder:${CINDER_DBPASS}@${controller}/cinder
 
 # In the [DEFAULT] and [oslo_messaging_rabbit] sections, configure RabbitMQ message queue access:
 openstack-config --set ${CONF} DEFAULT rpc_backend rabbit
@@ -130,8 +131,8 @@ openstack-config --set ${CONF} DEFAULT auth_strategy keystone
 openstack-config --set ${CONF} keystone_authtoken auth_uri http://${controller}:5000
 openstack-config --set ${CONF} keystone_authtoken auth_url http://${controller}:35357
 openstack-config --set ${CONF} keystone_authtoken auth_plugin password
-openstack-config --set ${CONF} keystone_authtoken project_domain_id default
-openstack-config --set ${CONF} keystone_authtoken user_domain_id default
+openstack-config --set ${CONF} keystone_authtoken project_domain_name default
+openstack-config --set ${CONF} keystone_authtoken user_domain_name default
 openstack-config --set ${CONF} keystone_authtoken project_name service
 openstack-config --set ${CONF} keystone_authtoken username cinder
 openstack-config --set ${CONF} keystone_authtoken password ${CINDER_PASS}
@@ -140,7 +141,7 @@ openstack-config --set ${CONF} keystone_authtoken password ${CINDER_PASS}
 openstack-config --set ${CONF} DEFAULT my_ip ${block}
 
 # In the [oslo_concurrency] section, configure the lock path:
-openstack-config --set ${CONF} oslo_concurrency lock_path /var/lock/cinder
+openstack-config --set ${CONF} oslo_concurrency lock_path /var/lib/cinder/tmp
 
 # (Optional) To assist with troubleshooting, enable verbose logging in the [DEFAULT] section:
 ### openstack-config --set ${CONF} DEFAULT verbose  True
@@ -152,14 +153,20 @@ echo
 
 su -s /bin/sh -c "cinder-manage db sync" cinder
 
+}
+
+finalize_installation() {
 # To finalize installation
 # Start the Block Storage services and configure them to start when the system boots:
 echo
 echo "** Starting cinder services..."
 echo
 
+systemctl restart openstack-nova-api.service
 systemctl enable openstack-cinder-api.service openstack-cinder-scheduler.service
 systemctl start openstack-cinder-api.service openstack-cinder-scheduler.service
+
+systemctl status openstack-nova-api.service
 systemctl status openstack-cinder-api.service openstack-cinder-scheduler.service
 
 
@@ -171,6 +178,12 @@ echo
 sleep 5;
 
 cinder service-list
+}
+
+## main
+prerequisites
+install_and_configure_components
+finalize_installation
 
 echo
 echo "Done."

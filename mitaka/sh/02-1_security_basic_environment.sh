@@ -4,6 +4,10 @@ export LANG=en_US.utf8
 
 PW_FILE=OPENSTACK_PASSWD.ini
 
+# To install openssl
+yum -y install openssl
+
+
 cp -p ./${PW_FILE} ./${PW_FILE}.org
 
 for i in `grep -v -e ^# -e ^$ ${PW_FILE} | awk '{print $1}'`
@@ -14,4 +18,4 @@ done
 
 echo
 echo "** Created ${PW_FILE}. "
-echo 
+echo
