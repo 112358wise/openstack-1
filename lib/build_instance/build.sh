@@ -19,3 +19,4 @@ virt-install --name ${host} \
     --location ${location} \
     --initrd-inject=${host}.ks \
     --extra-args="ks=file:/${host}.ks console=ttyS0,115200"
+

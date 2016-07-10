@@ -24,7 +24,7 @@ echo
 echo "** openstack user create --password <password> swift"
 echo
 
-openstack user create --password ${SWIFT_PASS} swift
+openstack user create --domain default --password ${SWIFT_PASS} swift
 
 # Add the admin role to the swift user:
 echo

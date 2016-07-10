@@ -122,6 +122,8 @@ install_components () {
 
 finalize_installation () {
 
+  su -s /bin/sh -c "aodh-dbsync" aodh
+  
   # Start the Alarming services and configure them to start when the system boots:
 
   echo

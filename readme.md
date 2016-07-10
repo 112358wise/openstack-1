@@ -1,54 +1,55 @@
-åˆéÆÉhÉLÉÖÉÅÉìÉgÇÃì‡óeÇâ¬î\Ç»å¿ÇËÉVÉFÉãÉXÉNÉäÉvÉgÇ…ÇµÇΩÇ‡ÇÃÇ≈Ç∑ÅBÉGÉâÅ[èàóùÇÕÇŸÇ∆ÇÒÇ«çló∂ÇµÇƒÇ¢Ç»Ç¢Ç≈Ç∑ÅB
+ÂÖ¨Âºè„Éâ„Ç≠„É•„É°„É≥„Éà„ÅÆÂÜÖÂÆπ„ÇíÂèØËÉΩ„Å™Èôê„Çä„Ç∑„Çß„É´„Çπ„ÇØ„É™„Éó„Éà„Å´„Åó„Åü„ÇÇ„ÅÆ„Åß„Åô„ÄÇ
+Ë®≠ÂÆö„ÅØ‰∏äÊõ∏„Åç„Åï„Çå„Çã„Çà„ÅÜ„Å´„Åó„Å¶„ÅÑ„Åæ„Åô„Åå„ÄÅDB„ÅåÂ≠òÂú®„Åô„ÇãÂ†¥Âêà„Å™„Å©Âü∫Êú¨ÁöÑ„Å´„Ç®„É©„ÉºÂá¶ÁêÜ„ÅØ„Åª„Å®„Çì„Å©ËÄÉÊÖÆ„Åó„Å¶„ÅÑ„Å™„ÅÑ„Åß„Åô„ÄÇ
 http://docs.openstack.org/kilo/install-guide/install/yum/content/
 
-Memo: ÉXÉgÉåÅ[ÉWÉmÅ[ÉhÇÃç\ê¨ÇÕéñëOÇ…éËìÆÇ≈é¿é{Ç∑ÇÈïKóvÇ†ÇËÅiÉXÉNÉäÉvÉgÇ≈ÇÕÇ‚Ç¡ÇƒÇ¢Ç»Ç¢ÇÃÇ≈Åj
+Memo: „Çπ„Éà„É¨„Éº„Ç∏„Éé„Éº„Éâ„ÅÆÊßãÊàê„ÅØ‰∫ãÂâç„Å´ÊâãÂãï„ÅßÂÆüÊñΩ„Åô„ÇãÂøÖË¶Å„ÅÇ„ÇäÔºà„Çπ„ÇØ„É™„Éó„Éà„Åß„ÅØ„ÇÑ„Å£„Å¶„ÅÑ„Å™„ÅÑ„ÅÆ„ÅßÔºâ
 
-## ComputeÉmÅ[ÉhåìópÇ≈ç\ê¨
+## Compute„Éé„Éº„ÉâÂÖºÁî®„ÅßÊßãÊàê
 
 ```txt
-/dev/sdb1 -> cinder
-/dev/sdc1 -> swift
-/dev/sdd1 -> swift
+/dev/vdb1 -> cinder
+/dev/vdc1 -> swift
+/dev/vdd1 -> swift
 ```
 
-## CinderópÇÃç\ê¨
+## CinderÁî®„ÅÆÊßãÊàê
 ```sh
 # Make sure that you create a lvm volume  before you run this script
 # Note : If your system uses a different device name, adjust these steps accordingly.
 #
 # Create the LVM physical volume
-pvcreate /dev/sdb1
+pvcreate /dev/vdb1
 
 # Create the LVM volume group cinder-volumes:
 # The Block Storage service creates logical volumes in this volume group.
 #
-vgcreate cinder-volumes /dev/sdb1
+vgcreate cinder-volumes /dev/vdb1
 
 #
 # Edit the /etc/lvm/lvm.conf file and complete the following actions:
 #
-# In the devices section, add a filter that accepts the /dev/sdb device and rejects all other devices:
+# In the devices section, add a filter that accepts the /dev/vdb device and rejects all other devices:
 #
  devices {
  ...
- filter = [ "a/sdb/", "r/.*/"]
+ filter = [ "a/vdb/", "r/.*/"]
 #
 ```
 
-## swiftÇÃç\ê¨
+## swift„ÅÆÊßãÊàê
 ```sh
 # Prerequisite
 # - Copy the contents of the /etc/hosts file from the controller node and add the following to it:
 # - Install and configure NTP using the instructions
-# - Format the /dev/sdx1 and /dev/sdx1 partitions as XFS:
-   ex) mkfs.xfs /dev/sdc1
-       mkfs.xfs /dev/sdd1
-       mkdir -p /srv/node/sdc1
-       mkdir -p /srv/node/sdd1
+# - Format the /dev/vdx1 and /dev/vdx1 partitions as XFS:
+   ex) mkfs.xfs /dev/vdc1
+       mkfs.xfs /dev/vdd1
+       mkdir -p /srv/node/vdc1
+       mkdir -p /srv/node/vdd1
 # Edit the /etc/fstab file and add the following to it:
-      /dev/sdc1 /srv/node/sdc1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
-      /dev/sdd1 /srv/node/sdd1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+      /dev/vdc1 /srv/node/vdc1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+      /dev/vdd1 /srv/node/vdd1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
 # Mount the devices:
-       mount /srv/node/sdc1
-       mount /srv/node/sdd1
+       mount /srv/node/vdc1
+       mount /srv/node/vdd1
 ```

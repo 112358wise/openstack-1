@@ -19,3 +19,7 @@ part / --fstype="xfs" --grow --size=1 --ondisk=vda
 %packages --nobase --ignoremissing
 @core
 %end
+
+%post
+yum -y update
+%end
