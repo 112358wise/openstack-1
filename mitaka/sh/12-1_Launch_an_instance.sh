@@ -7,11 +7,11 @@ function get_netid () { neutron net-list | grep $1  | awk '{print $2}'; }
 create_provider_network () {
 
   # change these parameters on your environment
-  PROVIDER_NETWORK_CIDR="192.168.104.0/24"
-  START_IP_ADDRESS="192.168.104.201"
-  END_IP_ADDRESS="192.168.104.250"
+  PROVIDER_NETWORK_CIDR="192.168.2.0/24"
+  START_IP_ADDRESS="192.168.2.201"
+  END_IP_ADDRESS="192.168.2.250"
   DNS_RESOLVER="8.8.8.8"
-  PROVIDER_NETWORK_GATEWAY="192.168.104.1"
+  PROVIDER_NETWORK_GATEWAY="192.168.2.1"
 
   # On the controller node, source the admin credentials to gain access to admin-only CLI commands:
   source ~/admin-openrc
@@ -21,7 +21,7 @@ create_provider_network () {
   # The --provider:physical_network provider and --provider:network_type flat options connect the flat
   # virtual network to the flat (native/untagged) physical network on the eth3 interface on the host
   echo
-  echo "** neutron net-create ext-net"
+  echo "** neutron net-create provider"
   echo
 
   neutron net-create --shared --provider:physical_network provider \
@@ -32,10 +32,10 @@ create_provider_network () {
   # You should disable DHCP on this subnet because instances do not connect
   # directly to the external network and floating IP addresses require manual assignment.
   echo
-  echo "** neutron subnet-create ext-net"
+  echo "** neutron subnet-create provider"
   echo
 
-  neutron subnet-create --name provider \
+  neutron subnet-create --name provider-subnet \
     --allocation-pool start=${START_IP_ADDRESS},end=${END_IP_ADDRESS} \
     --dns-nameserver ${DNS_RESOLVER} --gateway ${PROVIDER_NETWORK_GATEWAY} \
     provider ${PROVIDER_NETWORK_CIDR}
@@ -64,10 +64,10 @@ create_selfservice_network () {
   # To create a subnet on the tenant network
   # Create the subnet:
   echo
-  echo "** neutron subnet-create demo-net"
+  echo "** neutron subnet-create demo-subnet"
   echo
 
-  neutron subnet-create --name demo-net \
+  neutron subnet-create --name demo-subnet \
     --dns-nameserver ${DNS_RESOLVER} --gateway ${SELFSERVICE_NETWORK_GATEWAY} \
     demo-net ${SELFSERVICE_NETWORK_CIDR}
 
@@ -95,7 +95,7 @@ create_router () {
   neutron router-create demo-router
 
   # Add the self-service network subnet as an interface on the router:
-  neutron router-interface-add demo-router demo-net
+  neutron router-interface-add demo-router demo-subnet
 
   # Set a gateway on the provider network on the router:
   neutron router-gateway-set demo-router provider
