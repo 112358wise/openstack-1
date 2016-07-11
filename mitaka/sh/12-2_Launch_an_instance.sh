@@ -4,45 +4,6 @@ export LANG=en_US.utf8
 
 function get_netid () { neutron net-list | grep $1  | awk '{print $2}'; }
 
-create_provider_network () {
-
-  # change these parameters on your environment
-  PROVIDER_NETWORK_CIDR="192.168.2.0/24"
-  START_IP_ADDRESS="192.168.2.201"
-  END_IP_ADDRESS="192.168.2.250"
-  DNS_RESOLVER="8.8.8.8"
-  PROVIDER_NETWORK_GATEWAY="192.168.2.1"
-
-  # On the controller node, source the admin credentials to gain access to admin-only CLI commands:
-  source ~/admin-openrc
-
-  # Create the network:
-  # The --shared option allows all projects to use the virtual network.
-  # The --provider:physical_network provider and --provider:network_type flat options connect the flat
-  # virtual network to the flat (native/untagged) physical network on the eth3 interface on the host
-  echo
-  echo "** neutron net-create provider"
-  echo
-
-  neutron net-create --shared --provider:physical_network provider \
-    --provider:network_type flat provider
-
-  # To create a subnet on the external network
-  # Create the subnet:
-  # You should disable DHCP on this subnet because instances do not connect
-  # directly to the external network and floating IP addresses require manual assignment.
-  echo
-  echo "** neutron subnet-create provider"
-  echo
-
-  neutron subnet-create --name provider-subnet \
-    --allocation-pool start=${START_IP_ADDRESS},end=${END_IP_ADDRESS} \
-    --dns-nameserver ${DNS_RESOLVER} --gateway ${PROVIDER_NETWORK_GATEWAY} \
-    provider ${PROVIDER_NETWORK_CIDR}
-
-  echo
-  echo "Done."
-}
 
 create_selfservice_network () {
 
@@ -254,11 +215,11 @@ fi
 
 INSTANCE_NAME=$1
 
-create_provider_network
 create_selfservice_network
 create_router
 generate_keypair
 determine_instance_options
+add_security_group
 launch_instance ${INSTANCE_NAME}
 
 echo
