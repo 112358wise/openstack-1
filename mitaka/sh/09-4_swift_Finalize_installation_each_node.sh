@@ -24,8 +24,8 @@ HASH_PATH_PREFIX=`get_passwd HASH_PATH_PREFIX`
 # Obtain the /etc/swift/swift.conf file from the Object Storage source repository:
 
 curl -o /etc/swift/swift.conf \
-  https://git.openstack.org/cgit/openstack/swift/plain/etc/swift.conf-sample?h=stable/kilo
-
+  https://git.openstack.org/cgit/openstack/swift/plain/etc/swift.conf-sample?h=stable/mitaka
+  
 # Edit the /etc/swift/swift.conf file and complete the following actions:
 # In the [swift-hash] section, configure the hash path prefix and suffix for your environment.
 CONF=/etc/swift/swift.conf
@@ -89,36 +89,43 @@ source ~/demo-openrc
 
 # Show the service status:
 echo
-echo "** swift -V 3 stat"
+echo "** swift stat"
 echo
 
-swift -V 3 stat
+swift stat
 sleep 1;
 
-# Upload a test file:
+# Create container1 container:
 echo
-echo "** Upload a test file"
+echo "** Create container1 container"
+echo
+
+openstack container create container1
+
+# Upload a test file to the container1 container:
+echo
+echo "** Upload a test file to the container1 container:"
 echo
 
 echo test > test.txt
 
-swift -V 3 upload demo-container1 test.txt
+openstack object create container1 test.txt
 sleep 1;
 
-# List containers
+# List files in the container1 container:
 echo
-echo "** swift -V 3 list"
+echo "**  openstack object list container1"
 echo
 
-swift -V 3 list
+openstack object list container1
 sleep 1;
 
-# Download a test file:
+# openstack object save container1 FILE
 echo
-echo "** swift -V 3 download demo-container1 test.txt"
+echo "** Download a test file from the container1 container:"
 echo
 
-swift -V 3 download demo-container1 test.txt
+openstack object save container1 test.txt
 cat test.txt
 
 echo

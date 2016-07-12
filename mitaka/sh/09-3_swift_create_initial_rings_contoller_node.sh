@@ -29,10 +29,10 @@ create_account_ring () {
     swift-ring-builder account.builder create 10 3 1
 
     # Add each storage node to the ring:
-    swift-ring-builder account.builder add r1z1-${object1}:6002/${device1} 100
-    swift-ring-builder account.builder add r1z2-${object1}:6002/${device2} 100
-    swift-ring-builder account.builder add r1z3-${object2}:6002/${device1} 100
-    swift-ring-builder account.builder add r1z4-${object2}:6002/${device2} 100
+    swift-ring-builder account.builder add --region 1 --zone 1 --ip ${object1} --port 6002 --device sdb --weight 100
+    swift-ring-builder account.builder add --region 1 --zone 1 --ip ${object1} --port 6002 --device sdc --weight 100
+    swift-ring-builder account.builder add --region 1 --zone 2 --ip ${object2} --port 6002 --device sdb --weight 100
+    swift-ring-builder account.builder add --region 1 --zone 2 --ip ${object2} --port 6002 --device sdc --weight 100
 
     # Verify the ring contents:
     echo
@@ -67,10 +67,10 @@ create_contrainer_ring () {
     swift-ring-builder container.builder create 10 3 1
 
     # Add each storage node to the ring:
-    swift-ring-builder container.builder add r1z1-${object1}:6001/${device1} 100
-    swift-ring-builder container.builder add r1z2-${object1}:6001/${device2} 100
-    swift-ring-builder container.builder add r1z3-${object2}:6001/${device1} 100
-    swift-ring-builder container.builder add r1z4-${object2}:6001/${device2} 100
+    swift-ring-builder container.builder add --region 1 --zone 1 --ip ${object1} --port 6001 --device sdb --weight 100
+    swift-ring-builder container.builder add --region 1 --zone 1 --ip ${object1} --port 6001 --device sdc --weight 100
+    swift-ring-builder container.builder add --region 1 --zone 2 --ip ${object2} --port 6001 --device sdb --weight 100
+    swift-ring-builder container.builder add --region 1 --zone 2 --ip ${object2} --port 6001 --device sdc --weight 100
 
     # Verify the ring contents:
     echo
@@ -105,10 +105,10 @@ create_object_ring () {
     swift-ring-builder object.builder create 10 3 1
 
     # Add each storage node to the ring:
-    swift-ring-builder object.builder add r1z1-${object1}:6000/${device1} 100
-    swift-ring-builder object.builder add r1z2-${object1}:6000/${device2} 100
-    swift-ring-builder object.builder add r1z3-${object2}:6000/${device1} 100
-    swift-ring-builder object.builder add r1z4-${object2}:6000/${device2} 100
+    swift-ring-builder object.builder add --region 1 --zone 1 --ip ${object1} --port 6000 --device sdb --weight 100
+    swift-ring-builder object.builder add --region 1 --zone 1 --ip ${object1} --port 6000 --device sdc --weight 100
+    swift-ring-builder object.builder add --region 1 --zone 2 --ip ${object2} --port 6000 --device sdb --weight 100
+    swift-ring-builder object.builder add --region 1 --zone 2 --ip ${object2} --port 6000 --device sdc --weight 100
 
     # Verify the ring contents:
     echo

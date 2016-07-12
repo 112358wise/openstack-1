@@ -4,16 +4,16 @@
 # - Copy the contents of the /etc/hosts file from the controller node and add the following to it:
 # - Install and configure NTP using the instructions
 # - Format the /dev/sdx1 and /dev/sdx1 partitions as XFS:
-#   ex) mkfs.xfs /dev/sdc1
-#       mkfs.xfs /dev/sdd1
-#       mkdir -p /srv/node/sdc1
-#       mkdir -p /srv/node/sdd1
+#   ex) mkfs.xfs /dev/sdc
+#       mkfs.xfs /dev/sdd
+#       mkdir -p /srv/node/sdc
+#       mkdir -p /srv/node/sdd
 # Edit the /etc/fstab file and add the following to it:
-#      /dev/sdd1 /srv/node/sdc1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
-#      /dev/sde1 /srv/node/sdd1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+#      /dev/sdc /srv/node/sdc xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+#      /dev/sdd /srv/node/sdd xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
 # Mount the devices:
-#       mount /srv/node/sdc1
-#       mount /srv/node/sdd1
+#       mount /srv/node/sdc
+#       mount /srv/node/sdd
 
 export LANG=en_US.utf8
 
@@ -70,7 +70,7 @@ lock file = /var/lock/container.lock
 max connections = 2
 path = /srv/node/
 read only = false
-lock file = /var/lock/object.loc
+lock file = /var/lock/object.lock
 " >> ${CONF}
 
 # Start the rsyncd service and configure it to start when the system boots:
@@ -87,7 +87,7 @@ echo
 echo "** Installing the packages..."
 echo
 
-yum -y -q install openstack-swift-account openstack-swift-container \
+yum -y install openstack-swift-account openstack-swift-container \
   openstack-swift-object
 
 # Obtain the accounting, container, object, container-reconciler,
@@ -96,20 +96,9 @@ echo
 echo "** Downloading swift config..."
 echo
 
-curl -o /etc/swift/account-server.conf \
-  https://git.openstack.org/cgit/openstack/swift/plain/etc/account-server.conf-sample?h=stable/kilo
-
-curl -o /etc/swift/container-server.conf \
-  https://git.openstack.org/cgit/openstack/swift/plain/etc/container-server.conf-sample?h=stable/kilo
-
-curl -o /etc/swift/object-server.conf \
-  https://git.openstack.org/cgit/openstack/swift/plain/etc/object-server.conf-sample?h=stable/kilo
-
-curl -o /etc/swift/container-reconciler.conf \
-  https://git.openstack.org/cgit/openstack/swift/plain/etc/container-reconciler.conf-sample?h=stable/kilo
-
-curl -o /etc/swift/object-expirer.conf \
-  https://git.openstack.org/cgit/openstack/swift/plain/etc/object-expirer.conf-sample?h=stable/kilo
+curl -o /etc/swift/account-server.conf https://git.openstack.org/cgit/openstack/swift/plain/etc/account-server.conf-sample?h=stable/mitaka
+curl -o /etc/swift/container-server.conf https://git.openstack.org/cgit/openstack/swift/plain/etc/container-server.conf-sample?h=stable/mitaka
+curl -o /etc/swift/object-server.conf https://git.openstack.org/cgit/openstack/swift/plain/etc/object-server.conf-sample?h=stable/mitaka
 
 # Edit the /etc/swift/account-server.conf file and complete the following actions:
 CONF=/etc/swift/account-server.conf
@@ -125,11 +114,13 @@ openstack-config --set ${CONF} DEFAULT bind_port 6002
 openstack-config --set ${CONF} DEFAULT user swift
 openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 openstack-config --set ${CONF} DEFAULT devices /srv/node
+openstack-config --set ${CONF} DEFAULT mount_check True
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon account-server"
+openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon account-server
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
+openstack-config --set ${CONF} filter:recon use egg:swift#recon
 openstack-config --set ${CONF} filter:recon recon_cache_path /var/cache/swift
 
 # Edit the /etc/swift/container-server.conf file and complete the following actions:
@@ -146,11 +137,13 @@ openstack-config --set ${CONF} DEFAULT bind_port 6001
 openstack-config --set ${CONF} DEFAULT user swift
 openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 openstack-config --set ${CONF} DEFAULT devices /srv/node
+openstack-config --set ${CONF} DEFAULT mount_check True
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon container-server"
+openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon container-server
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
+openstack-config --set ${CONF} filter:recon use egg:swift#recon
 openstack-config --set ${CONF} filter:recon recon_cache_path /var/cache/swift
 
 # Edit the /etc/swift/object-server.conf file and complete the following actions:
@@ -167,9 +160,10 @@ openstack-config --set ${CONF} DEFAULT bind_port 6000
 openstack-config --set ${CONF} DEFAULT user swift
 openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 openstack-config --set ${CONF} DEFAULT devices /srv/node
+openstack-config --set ${CONF} DEFAULT mount_check True
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon object-server"
+openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon object-server
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
 openstack-config --set ${CONF} filter:recon recon_cache_path /var/cache/swift
@@ -180,7 +174,8 @@ chown -R swift:swift /srv/node
 
 # Create the recon directory and ensure proper ownership of it:
 mkdir -p /var/cache/swift
-chown -R swift:swift /var/cache/swift
+chown -R root:swift /var/cache/swift
+chmod -R 755 /var/cache/swift
 
 echo "** ----------------------------------------------------------------"
 echo "** Complete the $0 on `hostname`"
