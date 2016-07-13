@@ -15,7 +15,7 @@ function get_passwd () { grep ^$1 ${PW_FILE} | awk -F= '{print $2}' | sed 's/ //
 
 # To Fix the password , Edit these paramters manually.
 ADMIN_PASS=`get_passwd ADMIN_PASS`
-DEMO_PASS=`get_passwd DEMO_PASS
+DEMO_PASS=`get_passwd DEMO_PASS`
 
 # For security reasons, disable the temporary authentication token mechanism:
 #
