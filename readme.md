@@ -45,8 +45,8 @@ mkfs.xfs -f /dev/vdd
 mkdir -p /srv/node/vdc
 mkdir -p /srv/node/vdd
 # Edit the /etc/fstab file and add the following to it:
-/dev/vdc /srv/node/vdc xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
-/dev/vdd /srv/node/vdd xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+echo "/dev/vdc /srv/node/vdc xfs noatime,nodiratime,nobarrier,logbufs=8 0 2" >> /etc/fstab
+echo "/dev/vdd /srv/node/vdd xfs noatime,nodiratime,nobarrier,logbufs=8 0 2" >> /etc/fstab
 # Mount the devices:
 mount /srv/node/vdc
 mount /srv/node/vdd

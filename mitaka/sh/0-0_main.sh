@@ -2,13 +2,13 @@
 
 # controller node
 controller=192.168.101.11
-controller_tun=192.168.101.11
+controller_tun=192.168.102.11
 
-# conmpute / block node 1
+# conmpute1 / block node 1
 compute1=192.168.101.12
 compute1_tun=192.168.102.12
 
-# compute / block node 2
+# compute2 / block node 2
 compute2=192.168.101.13
 compute2_tun=192.168.102.13
 

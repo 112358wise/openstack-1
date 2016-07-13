@@ -9,6 +9,14 @@ fi
 
 controller=$1
 
+# Get the Password from OPENSTACK_PASSWD.ini
+PW_FILE=OPENSTACK_PASSWD.ini
+function get_passwd () { grep ^$1 ${PW_FILE} | awk -F= '{print $2}' | sed 's/ //g'; }
+
+# To Fix the password , Edit these paramters manually.
+ADMIN_PASS=`get_passwd ADMIN_PASS`
+DEMO_PASS=`get_passwd DEMO_PASS
+
 # For security reasons, disable the temporary authentication token mechanism:
 #
 # Edit the /usr/share/keystone/keystone-dist-paste.ini file and remove admin_token_auth
@@ -39,7 +47,7 @@ echo
 
 openstack --os-auth-url http://${controller}:35357/v3 \
  --os-project-domain-name default --os-user-domain-name default \
- --os-project-name admin --os-username admin token issue
+ --os-project-name admin --os-username admin --os-password ${ADMIN_PASS} token issue
 
 # As the demo user, request an authentication token from the Identity version 3 API:
 echo
@@ -48,7 +56,7 @@ echo
 
 openstack --os-auth-url http://${controller}:5000/v3 \
  --os-project-domain-name default --os-user-domain-name default \
- --os-project-name demo --os-username demo token issue
+ --os-project-name demo --os-username demo --os-password ${DEMO_PASS} token issue
 
 echo
 echo "Done."
