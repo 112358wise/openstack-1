@@ -67,7 +67,7 @@ function install_components () {
     echo "** Installing the packages..."
     echo
 
-    yum install openstack-swift-proxy python-swiftclient \
+    yum -y install openstack-swift-proxy python-swiftclient \
       python-keystoneclient python-keystonemiddleware \
       memcached
   
@@ -93,7 +93,7 @@ function install_components () {
     openstack-config --set ${CONF} DEFAULT swift_dir /etc/swift
 
     # In the [pipeline:main] section, enable the appropriate modules:
-    openstack-config --set ${CONF} pipeline:main pipeline catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk ratelimit authtoken keystoneauth container-quotas account-quotas slo dlo versioned_writes proxy-logging proxy-server
+    openstack-config --set ${CONF} pipeline:main pipeline "catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk ratelimit authtoken keystoneauth container-quotas account-quotas slo dlo versioned_writes proxy-logging proxy-server"
     
     # In the [app:proxy-server] section, enable automatic account creation:
     openstack-config --set ${CONF} app:proxy-server use egg:swift#proxy
@@ -119,7 +119,7 @@ function install_components () {
 
     # In the [filter:cache] section, configure the memcached location:
     openstack-config --set ${CONF} filter:cache use egg:swift#memcache
-    openstack-config --set ${CONF} filter:cache memcache_servers = ${controller}:11211
+    openstack-config --set ${CONF} filter:cache memcache_servers ${controller}:11211
 
 echo
 echo "** Done."

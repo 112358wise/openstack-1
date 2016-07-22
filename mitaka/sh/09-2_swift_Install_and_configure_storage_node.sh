@@ -117,7 +117,7 @@ openstack-config --set ${CONF} DEFAULT devices /srv/node
 openstack-config --set ${CONF} DEFAULT mount_check True
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon account-server
+openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon account-server"
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
 openstack-config --set ${CONF} filter:recon use egg:swift#recon
@@ -140,7 +140,7 @@ openstack-config --set ${CONF} DEFAULT devices /srv/node
 openstack-config --set ${CONF} DEFAULT mount_check True
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon container-server
+openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon container-server"
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
 openstack-config --set ${CONF} filter:recon use egg:swift#recon
@@ -163,7 +163,7 @@ openstack-config --set ${CONF} DEFAULT devices /srv/node
 openstack-config --set ${CONF} DEFAULT mount_check True
 
 # In the [pipeline:main] section, enable the appropriate modules:
-openstack-config --set ${CONF} pipeline:main pipeline healthcheck recon object-server
+openstack-config --set ${CONF} pipeline:main pipeline "healthcheck recon object-server"
 
 # In the [filter:recon] section, configure the recon (metrics) cache directory:
 openstack-config --set ${CONF} filter:recon recon_cache_path /var/cache/swift
